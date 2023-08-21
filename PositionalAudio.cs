@@ -1,40 +1,33 @@
 using BepInEx;
 using BepInEx.Unity.IL2CPP;
 using UnityEngine;
-using System.Linq;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
-using MultiplayerBasicExample;
-using static Il2CppSystem.Globalization.CultureInfo;
-using SNetwork;
 
 namespace PositionalAudio
 {
-    [BepInPlugin("net.devante.gtfo.positionalaudio", "PositionalAudio", "1.0.0")]
-    public class Plugin : BasePlugin
-    {
+	[BepInPlugin("net.devante.gtfo.positionalaudio", "PositionalAudio", "1.0.0")]
+	public class Plugin : BasePlugin
+	{
 		mumblelib.MumbleLinkFile mumbleLink;
 		private Timer gameStateCheckTimer;
-        private Timer reportingTaskTimer;
+		private Timer reportingTaskTimer;
 
-        public override void Load()
-        {
-            // Plugin startup logic
-            Log.LogInfo($"Plugin is loaded!");
+		public override void Load()
+		{
+			// Plugin startup logic
+			Log.LogInfo($"Plugin is loaded!");
 
-            // Set up a timer to periodically check the game state every 5 seconds
-            gameStateCheckTimer = new Timer(CheckGameState, null, TimeSpan.Zero, TimeSpan.FromSeconds(3));
-        }
+			// Set up a timer to periodically check the game state every 5 seconds
+			gameStateCheckTimer = new Timer(CheckGameState, null, TimeSpan.Zero, TimeSpan.FromSeconds(3));
+		}
 
-        private unsafe void CheckGameState(object state)
-        {
-            var cState = GameStateManager.CurrentStateName.ToString();
+		private unsafe void CheckGameState(object state)
+		{
+			var cState = GameStateManager.CurrentStateName.ToString();
 
-            if (GameStateManager.CurrentStateName.ToString() == "InLevel")
-            {
-                // await Task.Delay(1000);
-                Log.LogInfo("Game is now in the 'InLevel' state.");
+			if (GameStateManager.CurrentStateName.ToString() == "InLevel")
+			{
+				// await Task.Delay(1000);
+				Log.LogInfo("Game is now in the 'InLevel' state.");
 
 				// Run Mumble Setup
 				mumbleLink = mumblelib.MumbleLinkFile.CreateOrOpen();
@@ -53,14 +46,14 @@ namespace PositionalAudio
 				// Stop the game state check timer
 				gameStateCheckTimer.Change(Timeout.Infinite, Timeout.Infinite);
 
-                // Start the ReportingTask every second
-                reportingTaskTimer = new Timer(FixedUpdated, null, TimeSpan.Zero, TimeSpan.FromMilliseconds(12));
-            }
-            else
-            {
-                Log.LogInfo($"Currently not in level. Reattempting.. ({cState})");
-            }
-        }
+				// Start the ReportingTask every second
+				reportingTaskTimer = new Timer(FixedUpdated, null, TimeSpan.Zero, TimeSpan.FromMilliseconds(1200));
+			}
+			else
+			{
+				Log.LogInfo($"Currently not in level. Reattempting.. ({cState})");
+			}
+		}
 
 		private static System.Random random = new System.Random();
 		private string randomString(int len)
@@ -72,34 +65,44 @@ namespace PositionalAudio
 
 
 		private unsafe void FixedUpdated(object state)
-        {
-			// Execute the code to get player variables and output them to the console
+		{
+			// Set Current GameState.
 			var cState = GameStateManager.CurrentStateName.ToString();
+
+			// Check if Player left the expedition to prevent game crashing.
+			if (cState != "InLevel")
+			{
+				Log.LogInfo($"Expedition Aborted, Closing Link Connection.");
+				// Stop sending data to Mumble
+				reportingTaskTimer.Change(Timeout.Infinite, Timeout.Infinite);
+
+				// Start checking Gamestate again
+				gameStateCheckTimer = new Timer(CheckGameState, null, TimeSpan.Zero, TimeSpan.FromSeconds(3));
+
+				// Close Mumble Link Connection
+				mumbleLink.Dispose();
+				mumbleLink = null;
+
+				return;
+			}
+
+			// Execute the code to get player variables and output them to the console
 			var character = Player.PlayerManager.GetLocalPlayerAgent();
-            var position = character.EyePosition - new Vector3(0, 1, 0);
-			// var rotation = character.transform.localEulerAngles - new Vector3(0, 1, 0);
-			// var anglex = character.gameObject.transform.localRotation.x;
-            // var angley = character.gameObject.transform.localRotation.y;
-            // var anglez = character.gameObject.transform.localRotation.z;
+			var position = character.EyePosition - new Vector3(0, 1, 0);
 
 			// Camera
 			Transform camera = GameObject.Find("FPSCameraHolder_PlayerLocal(Clone)")?.transform;
-			//var angle = Quaternion.LookRotation(Vector3.forward).eulerAngles;
 
-			// Convert Vector3 components to strings
-			string positionString = $"({position.x}, {position.y}, {position.z})";
-			// string rotationString = $"({rotation.x}, {rotation.y}, {rotation.z})";
-			//string angleString = $"({angle.x}, {angle.y}, {angle.z})";
-
-			//   Log.LogInfo($"Player Position: {positionString}");
-			// Log.LogInfo($"Player Angle: {rotationString}");
+			// Convert Vector3 components to strings - Only needed if debug outputs are uncommented.
+			//    string positionString = $"({position.x}, {position.y}, {position.z})";
+			//    Log.LogInfo($"Player Position: {positionString}");
 
 			if (character != null && camera != null && cState != null)
 			{
 				//   Log.LogInfo($"Everything is set. (!= null).");
 				if (mumbleLink == null)
 				{
-					//   	Log.LogInfo($"Initializing Link(). (mumbleLink == null).");
+					Log.LogInfo($"Initializing Load(). (mumbleLink == null).");
 					Load();
 				}
 

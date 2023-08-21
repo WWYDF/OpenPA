@@ -104,7 +104,6 @@ If you are using the Mumble Position Debugger by jrobsonchase, (https://gitlab.c
 # Known Issues
 
 - Game doesn't link until end of Elevator Sequence.
-- Game crashes upon leaving the Expedition.
 ---
 # Why isn't it on Thunderstore?
 Unfortunately due to the current state of the Mod, I have decided not to release on Thunderstore yet. If I keep working on it however, and squash the known issues, I will consider uploading it.

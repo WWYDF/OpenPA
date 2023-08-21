@@ -47,7 +47,7 @@ namespace PositionalAudio
 				gameStateCheckTimer.Change(Timeout.Infinite, Timeout.Infinite);
 
 				// Start the ReportingTask every second
-				reportingTaskTimer = new Timer(FixedUpdated, null, TimeSpan.Zero, TimeSpan.FromMilliseconds(1200));
+				reportingTaskTimer = new Timer(FixedUpdated, null, TimeSpan.Zero, TimeSpan.FromMilliseconds(12));
 			}
 			else
 			{

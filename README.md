@@ -1,4 +1,4 @@
-# Mumble Link in GTFO Guide
+# Mumble Link in GTFO
 *Spoiler Alert: It's hella scuffed.*
 
 
@@ -10,7 +10,7 @@ This is a mod I developed for use in [my videos](https://youtube.com/@PerfectMac
   - [Recommended Settings](https://github.com/WWYDF/OpenPA/blob/main/README.md#recommended-settings)
 - [Mumble Server Setup](https://github.com/WWYDF/OpenPA/blob/main/README.md#mumble-server-setup)
 - [Known Issues](https://github.com/WWYDF/OpenPA/blob/main/README.md#known-issues)
-- [Thunderstore](https://github.com/WWYDF/OpenPA/blob/main/README.md#thunderstore)
+- [Thunderstore](https://github.com/WWYDF/OpenPA/blob/main/README.md#why-isnt-it-on-thunderstore)
 
 
 ## Special Thanks:

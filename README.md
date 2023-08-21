@@ -16,7 +16,7 @@ This is a mod I developed for use in [my videos](https://youtube.com/@PerfectMac
 ## Special Thanks:
 [Josh Robson Chase](https://gitlab.com/jrobsonchase) for his [Positional Voice Debugger](https://gitlab.com/jrobsonchase/mumble-position-debug) and [Valheim Mod Base](https://gitlab.com/jrobsonchase/valheimpositionalaudio) as well as his [explanation of the whole thing](https://josh.robsonchase.com/valheim-mumble/). Seriously wouldn't have created this without his work.
 
-[GTFO Modding Team](https://discord.gg/gtfo-modding-server-782438773690597389) & [BepInEx](https://docs.bepinex.dev/) for putting together the [BepInEx Pack for GTFO](https://gtfo.thunderstore.io/package/BepInEx/BepInExPack_GTFO/).
+[GTFO Modding Team](https://discord.gg/gtfo-modding-server-782438773690597389) & [BepInEx](https://docs.bepinex.dev/) for putting together the [BepInEx Pack for GTFO](https://gtfo.thunderstore.io/package/BepInEx/BepInExPack_GTFO/) as well as the [Quickstart Guide](https://gtfo-modding.gitbook.io/wiki/) for Modding GTFO!
 
 ---
 

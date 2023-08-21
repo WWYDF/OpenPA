@@ -104,7 +104,6 @@ If you are using the Mumble Position Debugger by jrobsonchase, (https://gitlab.c
 # Known Issues
 
 - Game doesn't link until end of Elevator Sequence.
-- You can't hear eachother when in the Sandy Dimension.
 - Game crashes upon leaving the Expedition.
 ---
 # Why isn't it on Thunderstore?

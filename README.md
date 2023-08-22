@@ -21,14 +21,14 @@ This is a mod I developed for use in [my videos](https://youtube.com/@PerfectMac
 ---
 
 ## Installation Guide
-Might require some tinkering if you have extra mods. This process will become a LOT smoother once I release the mod on Thunderstore.
+Might require some tinkering if you have extra mods. This process will become a LOT smoother once I release the mod on Thunderstore. For now, you can [download a release here](https://github.com/WWYDF/OpenPA/releases).
 1. Install **r2modmanplus**. It also works with Thunderstore Mod Manager, but I find r2modmanplus to be better since it doesn't rely on Overwolf. You can download it here: https://github.com/ebkr/r2modmanPlus/releases
 2. Select **GTFO** as your Game and Create a Profile.
 3. Click **Online**, and install "**BepInExPack_GTFO**". It should be right at the top.
 4. Click on **Settings**, then **Browse Profile Folder**.
 5. In the Explorer window, move the released .zip in this folder. *(It should have a folder called BepInEx and a file called mods.yml)*
 6. **Close r2modmanplus**.
-7. Extract the ZIP directly into that folder. It should override files.
+7. Extract the [release](https://github.com/WWYDF/OpenPA/releases) `.zip` directly into that folder. It should override files.
 8. Open r2modmanplus and select your profile.
 9. You should now see "PositionalAudio" by Traveller on the list. :)
 10. Click "START MODDED" at the top left.

@@ -5,12 +5,12 @@
 This is a mod I developed for use in [my videos](https://youtube.com/@PerfectMachine/). It's not really designed for Public Use, so there is very clear hiccups here and there. (Check Known Issues for list)
 
 ## Table of Contents:
-- [Installation Guide](https://github.com/WWYDF/OpenPA/blob/main/README.md#installation-guide)
-- [Mumble Client Setup](https://github.com/WWYDF/OpenPA/blob/main/README.md#mumble-client-setup)
-  - [Recommended Settings](https://github.com/WWYDF/OpenPA/blob/main/README.md#recommended-settings)
-- [Mumble Server Setup](https://github.com/WWYDF/OpenPA/blob/main/README.md#mumble-server-setup)
-- [Known Issues](https://github.com/WWYDF/OpenPA/blob/main/README.md#known-issues)
-- [Thunderstore](https://github.com/WWYDF/OpenPA/blob/main/README.md#why-isnt-it-on-thunderstore)
+- [Installation Guide](https://github.com/WWYDF/OpenPA#installation-guide)
+- [Mumble Client Setup](https://github.com/WWYDF/OpenPA#mumble-client-setup)
+  - [Recommended Settings](https://github.com/WWYDF/OpenPA#recommended-settings)
+- [Mumble Server Setup](https://github.com/WWYDF/OpenPA#mumble-server-setup)
+- [Known Issues](https://github.com/WWYDF/OpenPA#known-issues)
+- [Thunderstore](https://github.com/WWYDF/OpenPA#why-isnt-it-on-thunderstore)
 
 
 ## Special Thanks:
@@ -22,6 +22,9 @@ This is a mod I developed for use in [my videos](https://youtube.com/@PerfectMac
 
 ## Installation Guide
 Might require some tinkering if you have extra mods. This process will become a LOT smoother once I release the mod on Thunderstore. For now, you can [download a release here](https://github.com/WWYDF/OpenPA/releases).
+
+⚠️ There is no Linux or MacOS support at this time! ⚠️
+
 1. Install **r2modmanplus**. It also works with Thunderstore Mod Manager, but I find r2modmanplus to be better since it doesn't rely on Overwolf. You can download it here: https://github.com/ebkr/r2modmanPlus/releases
 2. Select **GTFO** as your Game and Create a Profile.
 3. Click **Online**, and install "**BepInExPack_GTFO**". It should be right at the top.
@@ -57,9 +60,9 @@ Everyone needs to have done these steps, including the mod install in order for 
 
 ### Recommended Settings
 - Minimum Distance: 4.0m
-- Maximum Distance: 70.0m
+- Maximum Distance: 65.0m
 - Minimum Volume: 0%
-- Bloom: 0%
+- Bloom: 25%
 
 If someone's mic is bad or farther away (irl), you can right click on their name in Mumble and click "Local Volume Adjustment" to change their Gain specifically.
 
@@ -76,7 +79,7 @@ If you want to change the distance you can hear people, change "Maximum Distance
 #### You have four options:
 1. Check this guide to host your own Mumble Server. https://wiki.mumble.info/wiki/Murmurguide
 2. Find a free-to-use server on the Internet Browser in Mumble Client.
-3. Buy your own Mumble Server from a site like https://asteroidhost.com/mumble (Sponsored)
+3. Buy your own Mumble Server from a Hosting Company.
 4. Join my GTFO-Mumble Server for this project. <3
 > IP: mumble.devante.net
 
@@ -103,9 +106,8 @@ If you are using the Mumble Position Debugger by jrobsonchase, (https://gitlab.c
 ---
 # Known Issues
 
-- Game doesn't link until end of Elevator Sequence.
+- [No Known Issues](https://github.com/WWYDF/OpenPA/issues)! :)
 ---
 # Why isn't it on Thunderstore?
-Unfortunately due to the current state of the Mod, I have decided not to release on Thunderstore yet. If I keep working on it however, and squash the known issues, I will consider uploading it.
-
-For now, this is where it will reside.
+Now that I have squashed all the known bugs, I will be releasing it to Thunderstore very soon! Development and preview builds will continue to reside here.
+You can know when it's released by checking up on my [Thunderstore Profile here](https://gtfo.thunderstore.io/package/Traveller/).

@@ -24,10 +24,10 @@ namespace PositionalAudio
 		{
 			var cState = GameStateManager.CurrentStateName.ToString();
 
-			if (GameStateManager.CurrentStateName.ToString() == "InLevel")
+			if (cState == "Generating" || cState == "InLevel")
 			{
 				// await Task.Delay(1000);
-				Log.LogInfo("Game is now in the 'InLevel' state.");
+				Log.LogInfo("Game is now in the 'Generating' OR 'InLevel' state.");
 
 				// Run Mumble Setup
 				mumbleLink = mumblelib.MumbleLinkFile.CreateOrOpen();
@@ -37,8 +37,8 @@ namespace PositionalAudio
 				string id = randomString(16);
 				Log.LogInfo($"Setting Mumble ID to {id}");
 				frame->SetID(id);
-				Log.LogInfo($"Setting context to {cState}");
-				frame->SetContext(cState);
+				Log.LogInfo($"Setting context to InLevel");
+				frame->SetContext("InLevel");
 
 				Log.LogInfo("Mumble Shared Memory Initialized");
 
@@ -51,6 +51,7 @@ namespace PositionalAudio
 			}
 			else
 			{
+				// Important for debugging in development builds.
 				Log.LogInfo($"Currently not in level. Reattempting.. ({cState})");
 			}
 		}
@@ -70,7 +71,7 @@ namespace PositionalAudio
 			var cState = GameStateManager.CurrentStateName.ToString();
 
 			// Check if Player left the expedition to prevent game crashing.
-			if (cState != "InLevel")
+			if (cState != "Generating" && cState != "ReadyToStopElevatorRide" && cState != "StopElevatorRide" && cState != "ReadyToStartLevel" && cState != "InLevel")
 			{
 				Log.LogInfo($"Expedition Aborted, Closing Link Connection.");
 				// Stop sending data to Mumble
@@ -89,15 +90,16 @@ namespace PositionalAudio
 			// Execute the code to get player variables and output them to the console
 			var character = Player.PlayerManager.GetLocalPlayerAgent();
 			var position = character.EyePosition - new Vector3(0, 1, 0);
+            var ucam = character.FPSCamera;
 
-			// Camera
-			Transform camera = GameObject.Find("FPSCameraHolder_PlayerLocal(Clone)")?.transform;
+            // OldCamera
+            //    Transform camera = GameObject.Find("FPSCameraHolder_PlayerLocal(Clone)")?.transform;
 
 			// Convert Vector3 components to strings - Only needed if debug outputs are uncommented.
 			//    string positionString = $"({position.x}, {position.y}, {position.z})";
 			//    Log.LogInfo($"Player Position: {positionString}");
 
-			if (character != null && camera != null && cState != null)
+			if (character != null && ucam != null && cState != null)
 			{
 				//   Log.LogInfo($"Everything is set. (!= null).");
 				if (mumbleLink == null)
@@ -108,25 +110,22 @@ namespace PositionalAudio
 
 				mumblelib.Frame* frame = mumbleLink.FramePtr();
 
-				if (camera.localPosition != null)
+				if (ucam.Position != null)
 				{
-					//   	Log.LogInfo($"Sening Camera Position. (X: {camera.localPosition.x})");
-					frame->fCameraPosition[0] = camera.localPosition.x;
-					frame->fCameraPosition[1] = camera.localPosition.y;
-					frame->fCameraPosition[2] = camera.localPosition.z;
+					frame->fCameraPosition[0] = ucam.Position.x;
+					frame->fCameraPosition[1] = ucam.Position.y;
+					frame->fCameraPosition[2] = ucam.Position.z;
 				}
 
-				if (camera.forward != null)
+				if (ucam.Forward != null)
 				{
-					//   	Log.LogInfo($"Sening Camera Position. (fX: {character.Forward.x})");
-					frame->fCameraFront[0] = character.Forward.x;
-					frame->fCameraFront[1] = character.Forward.y;
-					frame->fCameraFront[2] = character.Forward.z;
+					frame->fCameraFront[0] = ucam.Forward.x;
+					frame->fCameraFront[1] = ucam.Forward.y;
+					frame->fCameraFront[2] = ucam.Forward.z;
 				}
 
 				if (position != null)
 				{
-					//   	Log.LogInfo($"Sening Player Position. (X: {position.x})");
 					frame->fAvatarPosition[0] = position.x;
 					frame->fAvatarPosition[1] = position.y;
 					frame->fAvatarPosition[2] = position.z;
@@ -134,7 +133,6 @@ namespace PositionalAudio
 
 				if (character.Forward != null)
 				{
-					//   	Log.LogInfo($"Sening Player Position. (fX: {character.Forward.x})");
 					frame->fAvatarFront[0] = character.Forward.x;
 					frame->fAvatarFront[1] = character.Forward.y;
 					frame->fAvatarFront[2] = character.Forward.z;
@@ -149,8 +147,10 @@ namespace PositionalAudio
 					Log.LogInfo($"Closing Link Connection.");
 					mumbleLink.Dispose();
 					mumbleLink = null;
+					return;
 				}
-			}
+                Log.LogInfo($"An error has occurred.");
+            }
 		}
 		public interface LinkFileFactory
 		{

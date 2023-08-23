@@ -1,0 +1,12 @@
+C:\Users\spqrr\Documents\GitHub\OpenPA\bin\Debug\OpenPA.deps.json
+C:\Users\spqrr\Documents\GitHub\OpenPA\bin\Debug\OpenPA.dll
+C:\Users\spqrr\Documents\GitHub\OpenPA\bin\Debug\OpenPA.pdb
+C:\Users\spqrr\Documents\GitHub\OpenPA\obj\Debug\OpenPA.csproj.AssemblyReference.cache
+C:\Users\spqrr\Documents\GitHub\OpenPA\obj\Debug\OpenPA.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\spqrr\Documents\GitHub\OpenPA\obj\Debug\OpenPA.AssemblyInfoInputs.cache
+C:\Users\spqrr\Documents\GitHub\OpenPA\obj\Debug\OpenPA.AssemblyInfo.cs
+C:\Users\spqrr\Documents\GitHub\OpenPA\obj\Debug\OpenPA.csproj.CoreCompileInputs.cache
+C:\Users\spqrr\Documents\GitHub\OpenPA\obj\Debug\OpenPA.dll
+C:\Users\spqrr\Documents\GitHub\OpenPA\obj\Debug\refint\OpenPA.dll
+C:\Users\spqrr\Documents\GitHub\OpenPA\obj\Debug\OpenPA.pdb
+C:\Users\spqrr\Documents\GitHub\OpenPA\obj\Debug\ref\OpenPA.dll

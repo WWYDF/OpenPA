@@ -2,7 +2,9 @@
 *Spoiler Alert: It's hella scuffed.*
 
 
-This is a mod I developed for use in [my videos](https://youtube.com/@PerfectMachine/). It's not really designed for Public Use, so there is very clear hiccups here and there. (Check Known Issues for list)
+This is a mod I developed for use in [my videos](https://youtube.com/@PerfectMachine/). It's not really designed for Public Use, so there might be hiccups here and there.
+
+I do plan on making it so talking wakes sleepers up, though I have hit some roadblocks, and ultimately put the update on hold. *(I'm like 99% of the way there... :/)*
 
 ## Table of Contents:
 - [Installation Guide](https://github.com/WWYDF/OpenPA#installation-guide)
@@ -13,18 +15,18 @@ This is a mod I developed for use in [my videos](https://youtube.com/@PerfectMac
 - [Thunderstore](https://github.com/WWYDF/OpenPA#why-isnt-it-on-thunderstore)
 
 
-## Special Thanks:
-[Josh Robson Chase](https://gitlab.com/jrobsonchase) for his [Positional Voice Debugger](https://gitlab.com/jrobsonchase/mumble-position-debug) and [Valheim Mod Base](https://gitlab.com/jrobsonchase/valheimpositionalaudio) as well as his [explanation of the whole thing](https://josh.robsonchase.com/valheim-mumble/). Seriously wouldn't have created this without his work.
-
-[GTFO Modding Team](https://discord.gg/gtfo-modding-server-782438773690597389) & [BepInEx](https://docs.bepinex.dev/) for putting together the [BepInEx Pack for GTFO](https://gtfo.thunderstore.io/package/BepInEx/BepInExPack_GTFO/) as well as the [Quickstart Guide](https://gtfo-modding.gitbook.io/wiki/) for Modding GTFO!
-
----
-
 ## Installation Guide
-Might require some tinkering if you have extra mods. This process will become a LOT smoother once I release the mod on Thunderstore. For now, you can [download a release here](https://github.com/WWYDF/OpenPA/releases).
+> Depending on the speed of your computer, the first launch could take a while. Just let it run as BepInEx needs to run first time setup. You can even watch it progress in the console window.
+### For Releases: (easy way)
+1. Install **r2modmanplus**. It also works with Thunderstore Mod Manager, but I find r2modmanplus to be better since it doesn't rely on Overwolf. You can download it here: https://github.com/ebkr/r2modmanPlus/releases
+2. Select **GTFO** as your Game and Create a Profile.
+3. Click **Online**, and search for "**PositionalAudio**". It should be by **Traveller**.
+4. Click **Download**, then **Download with dependencies**.
+5. Click **"Play Modded"** in the top left.
+6. Follow the Mumble Client steps [here](https://github.com/WWYDF/OpenPA#mumble-client-setup)
 
-⚠️ There is no Linux or MacOS support at this time! ⚠️
 
+### For Pre-releases:
 1. Install **r2modmanplus**. It also works with Thunderstore Mod Manager, but I find r2modmanplus to be better since it doesn't rely on Overwolf. You can download it here: https://github.com/ebkr/r2modmanPlus/releases
 2. Select **GTFO** as your Game and Create a Profile.
 3. Click **Online**, and install "**BepInExPack_GTFO**". It should be right at the top.
@@ -36,8 +38,6 @@ Might require some tinkering if you have extra mods. This process will become a 
 9. You should now see "PositionalAudio" by Traveller on the list. :)
 10. Click "START MODDED" at the top left.
 
-> Depending on the speed of your computer, the first launch could take a while. Just let it run as BepInEx needs to run first time setup. You can even watch it progress in the console window.
-
 ---
 
 ## Mumble Client Setup
@@ -46,27 +46,27 @@ This guide assumes you already have a server, if you don't, you can look below f
 1. Install Mumble Client You can get the latest here: https://www.mumble.info/downloads/
 2. Once installed, open Mumble. Go through all the audio setup, or skip if you're good at this.
 3. Click "Configure", then "Settings".
-4. Click "Audio Output" tab, then make sure "Positional Audio" is Enabled and Headphones is checked. For GTFO I recommend the settings below.
+4. Click "Audio Output" tab, then make sure "Positional Audio" is Enabled and Headphones is checked. **For GTFO I recommend the settings below.**
 5. Go to the Plugins tab on the left. Make sure "Link to Game and Transmit Position" is enabled. (At the top)
 6. Scroll down on the list and make sure every box next to "Link" is checked. (Enable, PA, & KeyEvents)
 7. Click "OK" to Save and Close the window.
 8. Connect to a Server.
 
-When you're connected to a Server and are CURRENTLY IN a GTFO level, it should say "GTFO Linked" in Mumble Chat.
-It has yet to work when in the elevator sequence, only when you're able to move around will it start to function. Sorry abt that.
-
-### Disclaimer
-Everyone needs to have done these steps, including the mod install in order for this to work. Anyone who hasn't will just be full, normal audio. (Like talking on Discord.)
+When you're connected to a Server and are CURRENTLY IN a GTFO level, it should say "Link (GTFO) Linked" in Mumble Chat.
+*(It has yet to work when in the elevator sequence, only when you're able to move around will it start to function. Sorry abt that.)*
 
 ### Recommended Settings
 - Minimum Distance: 4.0m
 - Maximum Distance: 65.0m
-- Minimum Volume: 0%
+- Minimum Volume: 0% (Makes it so people far enough away are totally silent.)
 - Bloom: 25%
 
-If someone's mic is bad or farther away (irl), you can right click on their name in Mumble and click "Local Volume Adjustment" to change their Gain specifically.
+### Disclaimers & Volume Fixes
+* Everyone needs to have done these steps, including the mod install in order for this to work. Anyone who hasn't will just be full, normal audio. (Like talking on Discord.)
 
-If you want to change the distance you can hear people, change "Maximum Distance". I recommend leaving the others alone.
+* If someone's mic is bad or farther away (irl), you can right click on their name in Mumble and click "Local Volume Adjustment" to change their Gain specifically.
+
+* If you want to change the distance you can hear people, change "Maximum Distance". I recommend leaving the others alone.
 
 ---
 
@@ -80,7 +80,7 @@ If you want to change the distance you can hear people, change "Maximum Distance
 1. Check this guide to host your own Mumble Server. https://wiki.mumble.info/wiki/Murmurguide
 2. Find a free-to-use server on the Internet Browser in Mumble Client.
 3. Buy your own Mumble Server from a Hosting Company.
-4. Join my GTFO-Mumble Server for this project. <3
+4. Join my Personal Mumble Server for these projects. <3
 > IP: mumble.devante.net
 
 
@@ -103,11 +103,12 @@ If you are using the Mumble Position Debugger by jrobsonchase, (https://gitlab.c
 14. Open Command Prompt in the directory with the .exe.
 15. Run the following command: `mumble-position-debug-windows.exe -host localhost -game GTFO -ctx InLevel`
 16. It should now show you the log output in the command prompt window for debugging the mod. <3
----
-# Known Issues
 
-- [No Known Issues](https://github.com/WWYDF/OpenPA/issues)! :)
+
+
+## Special Thanks:
+[Josh Robson Chase](https://gitlab.com/jrobsonchase) for his [Positional Voice Debugger](https://gitlab.com/jrobsonchase/mumble-position-debug) and [Valheim Mod Base](https://gitlab.com/jrobsonchase/valheimpositionalaudio) as well as his [explanation of the whole thing](https://josh.robsonchase.com/valheim-mumble/). Seriously wouldn't have created this without his work.
+
+[GTFO Modding Team](https://discord.gg/gtfo-modding-server-782438773690597389) & [BepInEx](https://docs.bepinex.dev/) for putting together the [BepInEx Pack for GTFO](https://gtfo.thunderstore.io/package/BepInEx/BepInExPack_GTFO/) as well as the [Quickstart Guide](https://gtfo-modding.gitbook.io/wiki/) for Modding GTFO!
+
 ---
-# Why isn't it on Thunderstore?
-Now that I have squashed all the known bugs, I will be releasing it to Thunderstore very soon! Development and preview builds will continue to reside here.
-You can know when it's released by checking up on my [Thunderstore Profile here](https://gtfo.thunderstore.io/package/Traveller/).

@@ -2,7 +2,7 @@
 *Spoiler Alert: It's hella scuffed.*
 
 
-This is a mod I developed for use in [my videos](https://youtube.com/@PerfectMachine/). It's not really designed for Public Use, so there might be hiccups here and there.
+This is a mod I developed for use in [my videos](https://youtube.com/@PerfectMachine/). In the latest update, I added the ability to wake up sleepers via talking in Mumble. 👀
 
 I do plan on making it so talking wakes sleepers up, though I have hit some roadblocks, and ultimately put the update on hold. *(I'm like 99% of the way there... :/)*
 
@@ -10,6 +10,7 @@ I do plan on making it so talking wakes sleepers up, though I have hit some road
 - [Installation Guide](https://github.com/WWYDF/OpenPA#installation-guide)
 - [Mumble Client Setup](https://github.com/WWYDF/OpenPA#mumble-client-setup)
   - [Recommended Settings](https://github.com/WWYDF/OpenPA#recommended-settings)
+  - [TalkState Setup](https://github.com/WWYDF/TalkState#installation-guide) **NEW!**
 - [Mumble Server Setup](https://github.com/WWYDF/OpenPA#mumble-server-setup)
 - [Known Issues](https://github.com/WWYDF/OpenPA#known-issues)
 - [Thunderstore](https://github.com/WWYDF/OpenPA#why-isnt-it-on-thunderstore)
@@ -57,9 +58,9 @@ When you're connected to a Server and are CURRENTLY IN a GTFO level, it should s
 
 ### Recommended Settings
 - Minimum Distance: 4.0m
-- Maximum Distance: 65.0m
+- Maximum Distance: 70.0m (Streamers should use something like 90.0m)
 - Minimum Volume: 0% (Makes it so people far enough away are totally silent.)
-- Bloom: 25%
+- Bloom: 35%
 
 ### Disclaimers & Volume Fixes
 * Everyone needs to have done these steps, including the mod install in order for this to work. Anyone who hasn't will just be full, normal audio. (Like talking on Discord.)
@@ -67,6 +68,9 @@ When you're connected to a Server and are CURRENTLY IN a GTFO level, it should s
 * If someone's mic is bad or farther away (irl), you can right click on their name in Mumble and click "Local Volume Adjustment" to change their Gain specifically.
 
 * If you want to change the distance you can hear people, change "Maximum Distance". I recommend leaving the others alone.
+
+### TalkState Setup
+You can find out how to setup TalkState by visiting its repository [here](https://github.com/WWYDF/TalkState#installation-guide).
 
 ---
 

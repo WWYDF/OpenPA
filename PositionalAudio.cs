@@ -27,6 +27,7 @@ namespace PositionalAudio
 		private Timer gameStateCheckTimer;
 		private Timer reportingTaskTimer;
 		string endData;
+		public bool isPlayerInLevel = false;
 		
         private volatile bool clientNoise = false;
 
@@ -36,6 +37,7 @@ namespace PositionalAudio
             OpenPAConfig.configIntensity = Config.Bind("TalkState", "Refresh Rate", 120, "The amount of time in milliseconds that the plugin will check for TalkState changes. 120 is a good sweetspot, but you can lower this if it's not precise enough. You could also up it if your host has a bad CPU, since hosts will be a bit more stressed out in this process. I would stay between 30ms and 240ms.");
             OpenPAConfig.configVerbose = Config.Bind("Verbose", "Enabled", false, "Enables debug logs in the BepInEx console. Can get very spammy, but useful for debugging.");
 
+            LevelAPI.OnEnterLevel += CheckIfPlayerIsInLevel; // open event call
 
             SendDebugLog($"Plugin is loaded!", false);
 
@@ -55,14 +57,14 @@ namespace PositionalAudio
 			if (cState == "Generating" || cState == "InLevel")
 			{
 				// await Task.Delay(1000);
-				SendDebugLog("Game is now in the 'Generating' OR 'InLevel' state.", false);
+				SendDebugLog($"Game is now in the 'Generating' OR 'InLevel' state. ({cState})", false);
 
 				// Run Mumble Setup
 				mumbleLink = mumblelib.MumbleLinkFile.CreateOrOpen();
 				mumblelib.Frame* frame = mumbleLink.FramePtr();
 				frame->SetName("GTFO");
 				frame->uiVersion = 2;
-				string id = randomString(16);
+				string id = RandomString(16);
 				SendDebugLog($"Setting Mumble ID to {id}", false);
 				frame->SetID(id);
 				SendDebugLog($"Setting context to InLevel", false);
@@ -84,7 +86,7 @@ namespace PositionalAudio
                 gameStateCheckTimer.Change(Timeout.Infinite, Timeout.Infinite);
 
 				// Start the ReportingTask every second
-				reportingTaskTimer = new Timer(FixedUpdated, null, System.TimeSpan.Zero, System.TimeSpan.FromMilliseconds(12));
+				reportingTaskTimer = new Timer(FixedUpdated, null, System.TimeSpan.Zero, System.TimeSpan.FromMilliseconds(24));
 			}
 			else
 			{
@@ -99,20 +101,35 @@ namespace PositionalAudio
 		// true == debug/verbose log (only shown to user if config value is true)
 		public void SendDebugLog(string msg, bool verbose)
 		{
-			if (verbose == true) { if (OpenPAConfig.configVerbose.Value == true) { Log.LogDebug(msg); }
-			} else { Log.LogDebug(msg); }
+			if (verbose == true) { if (OpenPAConfig.configVerbose.Value == true) { Log.LogInfo(msg); }
+			} else { Log.LogInfo(msg); }
         }
 
-		private static System.Random random = new System.Random();
-		private string randomString(int len)
+		// Might combine this with SendDebugLog later.
+        public void SendErrorLog(string msg, bool verbose)
+        {
+            if (verbose == true)
+            {
+                if (OpenPAConfig.configVerbose.Value == true) { Log.LogError(msg); }
+            } else { Log.LogError(msg); }
+
+        }
+
+        private static System.Random random = new System.Random();
+		private string RandomString(int len)
 		{
 			const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 			return new string(Enumerable.Repeat(chars, len)
 				.Select(s => s[random.Next(s.Length)]).ToArray());
 		}
 
+        public void CheckIfPlayerIsInLevel()
+		{
+            SendDebugLog($"Player connected to level.", true);
+			isPlayerInLevel = true;
+        }
 
-		private unsafe void FixedUpdated(object state)
+        private unsafe void FixedUpdated(object state)
 		{
 			// Set Current GameState.
 			var cState = GameStateManager.CurrentStateName.ToString();
@@ -120,7 +137,7 @@ namespace PositionalAudio
 			// Check if Player left the expedition to prevent game crashing.
 			if (cState != "Generating" && cState != "ReadyToStopElevatorRide" && cState != "StopElevatorRide" && cState != "ReadyToStartLevel" && cState != "InLevel")
 			{
-				SendDebugLog($"Expedition Aborted, Closing Link Connection.", false);
+                Log.LogWarning($"Expedition Aborted, Closing Link Connection.");
 				// Stop sending data to Mumble
 				reportingTaskTimer.Change(Timeout.Infinite, Timeout.Infinite);
 
@@ -131,12 +148,26 @@ namespace PositionalAudio
 				mumbleLink.Dispose();
 				mumbleLink = null;
 
-				return;
+				isPlayerInLevel = false;
+
+                return;
 			}
 
-			// Execute the code to get player variables and output them to the console
-			var character = Player.PlayerManager.GetLocalPlayerAgent();
-			var position = character.EyePosition - new Vector3(0, 1, 0);
+			if (isPlayerInLevel == false)
+			{
+                // SendErrorLog($"Player is not in level yet! Holding...", true); //   --- VERY spammy, even for verbose lol.
+                return;
+            }
+            
+			// Added this to allow player to join mid game. EnterLevel Event fires before PlayerAgent is created, thus leading to a crash.
+			// This should prevent that, and give it enough time to process the PlayerAgent.
+			if (Player.PlayerManager.HasLocalPlayerAgent() == false) {
+                SendErrorLog("No PlayerAgent.", true);
+                return;
+			}
+            // Execute the code to get player variables and output them to the console
+            PlayerAgent character = Player.PlayerManager.GetLocalPlayerAgent();
+            var position = character.EyePosition - new Vector3(0, 1, 0);
 			var ucam = character.FPSCamera;
 
 			if (character != null && ucam != null && cState != null)
@@ -202,9 +233,10 @@ namespace PositionalAudio
 					SendDebugLog($"Closing Link Connection.", false);
 					mumbleLink.Dispose();
 					mumbleLink = null;
-					return;
+                    isPlayerInLevel = false;
+                    return;
 				}
-				SendDebugLog($"An error has occurred.", true);
+				Log.LogError($"An error has occurred.");
 			}
 		}
 
@@ -222,9 +254,10 @@ namespace PositionalAudio
 			if (cState != "Generating" && cState != "ReadyToStopElevatorRide" && cState != "StopElevatorRide" && cState != "ReadyToStartLevel" && cState != "InLevel")
 			{
 				SendDebugLog($"Expedition Aborted, Closing TalkState Connection.", false);
+                isPlayerInLevel = false;
 
-				// Stop this thread.
-				clientThread.Join();
+                // Stop this thread.
+                clientThread.Join();
 
 				return;
 			}
@@ -232,8 +265,19 @@ namespace PositionalAudio
 			//ReadMemoryMappedFile();
 			void ReadMemoryMappedFile()
 			{
-				var character = Player.PlayerManager.GetLocalPlayerAgent();
-				bool sendStartOnce = false;
+                while (isPlayerInLevel == false)
+                {
+                    SendErrorLog($"Player is not in level yet! Holding...", true);
+					Thread.Sleep(5000); // Check every 5 seconds.
+                }
+
+                // Mid-Joiners Rejoyce.
+                while (Player.PlayerManager.HasLocalPlayerAgent() == false)
+                {
+                    SendErrorLog("No PlayerAgent.", true);
+                }
+                PlayerAgent character = Player.PlayerManager.GetLocalPlayerAgent();
+                bool sendStartOnce = false;
                 bool sendStopOnce = false;
                 HashSet<string> excludedStates = new HashSet<string> { "Generating", "ReadyToStopElevatorRide", "StopElevatorRide", "ReadyToStartLevel", "InLevel" };
                 int intensity = OpenPAConfig.configIntensity.Value;
@@ -275,7 +319,7 @@ namespace PositionalAudio
 								{
 									if (sendStopOnce == false) // hasn't been stopped yet.
 									{
-                                        SendDebugLog($"Sending stop signal for '{character.PlayerName}'.", true);
+                                        SendDebugLog($"Sending stop signal for '{SteamManager.LocalPlayerName.ToString()}'.", true);
                                         NetworkAPI.InvokeEvent<ClientSendData>("Client_Status", new ClientSendData
                                         {
                                             clientSlot = Player.PlayerManager.GetLocalPlayerSlotIndex(),

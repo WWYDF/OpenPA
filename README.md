@@ -4,8 +4,6 @@
 
 This is a mod I developed for use in [my videos](https://youtube.com/@PerfectMachine/). In the latest update, I added the ability to wake up sleepers via talking in Mumble. 👀
 
-I do plan on making it so talking wakes sleepers up, though I have hit some roadblocks, and ultimately put the update on hold. *(I'm like 99% of the way there... :/)*
-
 ## Table of Contents:
 - [Installation Guide](https://github.com/WWYDF/OpenPA#installation-guide)
 - [Mumble Client Setup](https://github.com/WWYDF/OpenPA#mumble-client-setup)

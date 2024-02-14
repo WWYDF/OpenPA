@@ -28,6 +28,7 @@ namespace PositionalAudio
 		private Timer reportingTaskTimer;
 		string endData;
 		public bool isPlayerInLevel = false;
+		Thread clientThread;
 		
         private volatile bool clientNoise = false;
 
@@ -44,6 +45,15 @@ namespace PositionalAudio
 			// Set up a timer to periodically check the game state every 5 seconds
 			gameStateCheckTimer = new Timer(CheckGameState, null, System.TimeSpan.Zero, System.TimeSpan.FromSeconds(3));
 		}
+
+        public override bool Unload()
+        {
+#pragma warning disable SYSLIB0006 // Type or member is obsolete
+            clientThread.Abort(); // Close Async Thread to prevent crash on close.
+#pragma warning restore SYSLIB0006 // Type or member is obsolete
+            SendDebugLog($"Plugin is unloading...", false);
+            return base.Unload();
+        }
 
         public struct ClientCharID
         {
@@ -246,7 +256,7 @@ namespace PositionalAudio
 			// Set Current GameState.
 			var cState = GameStateManager.CurrentStateName.ToString();
 
-			Thread clientThread = new(ReadMemoryMappedFile);
+			clientThread = new(ReadMemoryMappedFile);
 			clientThread.Start();
 
             SendDebugLog($"Initiated TalkState!", false);
@@ -282,6 +292,11 @@ namespace PositionalAudio
                 HashSet<string> excludedStates = new HashSet<string> { "Generating", "ReadyToStopElevatorRide", "StopElevatorRide", "ReadyToStartLevel", "InLevel" };
                 int intensity = OpenPAConfig.configIntensity.Value;
                 const string memoryMappedFileName = "posaudio_mumlink";
+				if (!File.Exists(memoryMappedFileName)) // Check if MemoryMappedFile is set. (aka if Mumble is open or not)
+				{
+                    SendErrorLog("TalkState enabled, but MemoryMappedFile could not be found. Disabling TalkState for this session.", false);
+					return;
+                }
                 const int dataSize = 1024;
                 SendDebugLog($"Initiated RMMF!", false);
 

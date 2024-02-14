@@ -1,7 +1,7 @@
 # Mumble Link in GTFO
 This is a mod I developed for use in [my videos](https://youtube.com/@PerfectMachine/). In the latest update, I added the ability to wake up sleepers via talking in Mumble. 👀
 
-The setup process is lengthy and tedious but I genuinely think it pays off. I spent a lot of time on making sure nobody is confused anywhere through the process so you can either use the [Wiki](https://github.com/WWYDF/OpenPA/wiki) to walk you through it, or you can watch the [video tutorial](https://youtu.be/mMbHiqQQSqk) below. ❤️
+The setup process is lengthy and tedious but I genuinely think it pays off. I spent a lot of time on making sure nobody is confused anywhere through the process so you can either use the [Wiki](https://github.com/WWYDF/OpenPA/wiki) to walk you through it, or you can watch the [video tutorial](https://youtu.be/mMbHiqQQSqk?t=0) below. ❤️
 
 ## Table of Contents:
 - [Installation Guide](https://github.com/WWYDF/OpenPA/wiki/Installation:-Mod-Manager)
@@ -22,7 +22,7 @@ https://github.com/WWYDF/OpenPA/wiki.
 
 As well as a full video here:
 
-[![click here for video](https://i.imgur.com/5mdVBjB.jpeg)](https://youtu.be/mMbHiqQQSqk)
+[![click here for video](https://i.imgur.com/5mdVBjB.jpeg)](https://youtu.be/mMbHiqQQSqk?t=27)
 
 ## Special Thanks:
 [Josh Robson Chase](https://gitlab.com/jrobsonchase) for his [Positional Voice Debugger](https://gitlab.com/jrobsonchase/mumble-position-debug) and [Valheim Mod Base](https://gitlab.com/jrobsonchase/valheimpositionalaudio) as well as his [explanation of the whole thing](https://josh.robsonchase.com/valheim-mumble/). Seriously wouldn't have created this without his work.

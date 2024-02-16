@@ -29,6 +29,7 @@ namespace PositionalAudio
 		string endData;
 		public bool isPlayerInLevel = false;
 		Thread clientThread;
+		public bool gameStarted = false;
 		
         private volatile bool clientNoise = false;
 
@@ -64,6 +65,15 @@ namespace PositionalAudio
 		{
 			var cState = GameStateManager.CurrentStateName.ToString();
 
+			if (gameStarted == true)
+			{
+                if (cState != "InLevel" && cState == "Inactive")
+				{
+					Unload();
+				}
+
+            }
+
 			if (cState == "Generating" || cState == "InLevel")
 			{
 				// await Task.Delay(1000);
@@ -90,6 +100,7 @@ namespace PositionalAudio
                     HostSync();
 					FindTalkState();
 					SendDebugLog("TalkState Shared Memory Initialized", false);
+					gameStarted = true;
 				}
 
                 // Stop the game state check timer
@@ -144,8 +155,14 @@ namespace PositionalAudio
 			// Set Current GameState.
 			var cState = GameStateManager.CurrentStateName.ToString();
 
-			// Check if Player left the expedition to prevent game crashing.
-			if (cState != "Generating" && cState != "ReadyToStopElevatorRide" && cState != "StopElevatorRide" && cState != "ReadyToStartLevel" && cState != "InLevel")
+            // Player closed the game.
+            if (cState != "InLevel" && cState == "Inactive") // Could result in unexpected game closes
+            {
+                Unload();
+            }
+
+            // Check if Player left the expedition to prevent game crashing.
+            if (cState != "Generating" && cState != "ReadyToStopElevatorRide" && cState != "StopElevatorRide" && cState != "ReadyToStartLevel" && cState != "InLevel")
 			{
                 Log.LogWarning($"Expedition Aborted, Closing Link Connection.");
 				// Stop sending data to Mumble
@@ -250,7 +267,6 @@ namespace PositionalAudio
 			}
 		}
 
-
 		public unsafe void FindTalkState()
 		{
 			// Set Current GameState.
@@ -292,13 +308,28 @@ namespace PositionalAudio
                 HashSet<string> excludedStates = new HashSet<string> { "Generating", "ReadyToStopElevatorRide", "StopElevatorRide", "ReadyToStartLevel", "InLevel" };
                 int intensity = OpenPAConfig.configIntensity.Value;
                 const string memoryMappedFileName = "posaudio_mumlink";
-				if (!File.Exists(memoryMappedFileName)) // Check if MemoryMappedFile is set. (aka if Mumble is open or not)
+
+				try // Check if MemoryMappedFile is set. (aka if Mumble is open or not)
+				{
+					using (MemoryMappedFile.OpenExisting(memoryMappedFileName))
+					{
+						SendDebugLog("TalkState Enabled, and MemoryMappedFile found, continuing with operation.", true);
+					}
+				}
+				catch (FileNotFoundException)
 				{
                     SendErrorLog("TalkState enabled, but MemoryMappedFile could not be found. Disabling TalkState for this session.", false);
-					return;
+                    return;
                 }
+				catch (Exception e)
+				{
+                    SendErrorLog("An error occurred while initializing TalkState MMF. Aborting...", false);
+                    return;
+                }
+                     
+				// Continue with initialization
                 const int dataSize = 1024;
-                SendDebugLog($"Initiated RMMF!", false);
+				SendDebugLog($"Initiated RMMF!", false);
 
 
 				while (true)

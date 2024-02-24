@@ -3,6 +3,8 @@ This is a mod I developed for use in [my videos](https://youtube.com/@PerfectMac
 
 The setup process is lengthy and tedious but I genuinely think it pays off. I spent a lot of time on making sure nobody is confused anywhere through the process so you can either use the [Wiki](https://github.com/WWYDF/OpenPA/wiki) to walk you through it, or you can watch the [video tutorial](https://youtu.be/mMbHiqQQSqk?t=0) below. ❤️
 
+There is a way to do this by modifying **Dissonance** in GTFO, (since Dissonance supports Proximity Chat, yet 10C disabled this feature), but I am unsure as to how to do that effectively. Maybe one day...
+
 ## Table of Contents:
 - [Installation Guide](https://github.com/WWYDF/OpenPA/wiki/Installation:-Mod-Manager)
   - [Video Tutorial](https://youtu.be/mMbHiqQQSqk?t=27)

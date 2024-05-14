@@ -1,3 +1,5 @@
-./.vs
 ./.git
 ./bin
+/.vs
+/obj
+/bin

@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "vFSvkn6B+YKNOXLxYwvx7D4AqRYY/3xoOdbpwc8YEvTP2mz20wsrI6ib3MkBKpBqvgQ9JeLak/SzHb6QgcGBGg==",
+  "dgSpecHash": "GEm5Sv8vZILMuEtSRiCpB4k2ZHGuYIJKJIY/f/tGgblXw+br0O5yF9tDjvT0TcK+2B3EqmdDLA1eFDShxm8/rw==",
   "success": true,
-  "projectFilePath": "C:\\Users\\spqrr\\Desktop\\Modding\\GitHub\\OpenPA\\OpenPA.csproj",
+  "projectFilePath": "C:\\GitHub\\OpenPA\\OpenPA\\OpenPA.csproj",
   "expectedPackageFiles": [],
   "logs": []
 }

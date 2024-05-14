@@ -13,11 +13,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\spqrr\\Desktop\\Modding\\GitHub\\OpenPA\\OpenPA.csproj",
+      "projectUniqueName": "C:\\GitHub\\OpenPA\\OpenPA\\OpenPA.csproj",
       "projectName": "OpenPA",
-      "projectPath": "C:\\Users\\spqrr\\Desktop\\Modding\\GitHub\\OpenPA\\OpenPA.csproj",
+      "projectPath": "C:\\GitHub\\OpenPA\\OpenPA\\OpenPA.csproj",
       "packagesPath": "C:\\Users\\spqrr\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\spqrr\\Desktop\\Modding\\GitHub\\OpenPA\\obj\\",
+      "outputPath": "C:\\GitHub\\OpenPA\\OpenPA\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\spqrr\\AppData\\Roaming\\NuGet\\NuGet.Config",

@@ -19,3 +19,11 @@ C:\Users\spqrr\Desktop\Modding\GitHub\OpenPA\obj\Debug\OpenPA.csproj.CoreCompile
 C:\Users\spqrr\Desktop\Modding\GitHub\OpenPA\obj\Debug\OpenPA.dll
 C:\Users\spqrr\Desktop\Modding\GitHub\OpenPA\obj\Debug\refint\OpenPA.dll
 C:\Users\spqrr\Desktop\Modding\GitHub\OpenPA\obj\Debug\ref\OpenPA.dll
+C:\GitHub\OpenPA\OpenPA\obj\Debug\OpenPA.csproj.AssemblyReference.cache
+C:\GitHub\OpenPA\OpenPA\obj\Debug\OpenPA.GeneratedMSBuildEditorConfig.editorconfig
+C:\GitHub\OpenPA\OpenPA\obj\Debug\OpenPA.AssemblyInfoInputs.cache
+C:\GitHub\OpenPA\OpenPA\obj\Debug\OpenPA.AssemblyInfo.cs
+C:\GitHub\OpenPA\OpenPA\obj\Debug\OpenPA.csproj.CoreCompileInputs.cache
+C:\GitHub\OpenPA\OpenPA\obj\Debug\OpenPA.dll
+C:\GitHub\OpenPA\OpenPA\obj\Debug\refint\OpenPA.dll
+C:\GitHub\OpenPA\OpenPA\obj\Debug\ref\OpenPA.dll

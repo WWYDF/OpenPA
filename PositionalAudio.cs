@@ -17,10 +17,11 @@ namespace PositionalAudio
     {
         public static ConfigEntry<bool> configTalkState;
         public static ConfigEntry<bool> configVerbose;
+        public static ConfigEntry<bool> configHardMode;
         public static ConfigEntry<int> configIntensity { get; set; }
     }
 
-    [BepInPlugin("net.devante.gtfo.positionalaudio", "PositionalAudio", "2.0.0")]
+    [BepInPlugin("net.devante.gtfo.positionalaudio", "PositionalAudio", "2.1.0")]
 	public class Plugin : BasePlugin
 	{
 		mumblelib.MumbleLinkFile mumbleLink;
@@ -37,6 +38,7 @@ namespace PositionalAudio
 		{
             OpenPAConfig.configTalkState = Config.Bind("TalkState", "Enabled", false, "Whether or not the game should tap into the TalkState plugin for Mumble.");
             OpenPAConfig.configIntensity = Config.Bind("TalkState", "Refresh Rate", 120, "The amount of time in milliseconds that the plugin will check for TalkState changes. 120 is a good sweetspot, but you can lower this if it's not precise enough. You could also up it if your host has a bad CPU, since hosts will be a bit more stressed out in this process. I would stay between 30ms and 240ms.");
+			OpenPAConfig.configHardMode = Config.Bind("TalkState", "Hard Mode", false, "If enabled, sleepers will instantly wake up from talking nearby. Only the host needs this turned on.");
             OpenPAConfig.configVerbose = Config.Bind("Verbose", "Enabled", false, "Enables debug logs in the BepInEx console. Can get very spammy, but useful for debugging.");
 
             LevelAPI.OnEnterLevel += CheckIfPlayerIsInLevel; // open event call
@@ -101,6 +103,9 @@ namespace PositionalAudio
 					FindTalkState();
 					SendDebugLog("TalkState Shared Memory Initialized", false);
 					gameStarted = true;
+
+					if (OpenPAConfig.configHardMode.Value)
+						SendDebugLog("Hard Mode Enabled", false);
 				}
 
                 // Stop the game state check timer
@@ -338,68 +343,81 @@ namespace PositionalAudio
                     {
 						break;
 					}
-                    using (var mmf = MemoryMappedFile.OpenExisting(memoryMappedFileName))
+                    try
 					{
-						using (var accessor = mmf.CreateViewAccessor(0, dataSize))
-						{
-							byte[] dataBytes = new byte[dataSize];
-							accessor.ReadArray(0, dataBytes, 0, dataSize);
+                        using (var mmf = MemoryMappedFile.OpenExisting(memoryMappedFileName))
+                        {
+                            using (var accessor = mmf.CreateViewAccessor(0, dataSize))
+                            {
+                                byte[] dataBytes = new byte[dataSize];
+                                accessor.ReadArray(0, dataBytes, 0, dataSize);
 
-							string receivedData = Encoding.UTF8.GetString(dataBytes).TrimEnd('\0');
-							// SendDebugLog($"Received Data: {receivedData}");
+                                string receivedData = Encoding.UTF8.GetString(dataBytes).TrimEnd('\0');
+                                // SendDebugLog($"Received Data: {receivedData}");
 
-							if (SNet.LocalPlayer.IsMaster == true) // Is declared as the host.
-							{
-								// HOST START
-								if (receivedData == "Talking")
-								{
+                                if (SNet.LocalPlayer.IsMaster == true) // Is declared as the host.
+                                {
+                                    // HOST START
+                                    if (receivedData == "Talking")
+                                    {
+                                        if (!OpenPAConfig.configHardMode.Value) // If hardmode is disabled:
+                                            character.Noise = Agent.NoiseType.Walk;
+                                        else
+                                            character.Noise = Agent.NoiseType.LoudLanding;
 
-									character.Noise = Agent.NoiseType.Walk;
-                                    SendDebugLog($"Sending WALK type to localplayeragent.", true);
-								}
-
-							}
-							else // Is declared as the client.
-							{
-								if (receivedData != "Talking") // Send stop signal
-								{
-									if (sendStopOnce == false) // hasn't been stopped yet.
-									{
-                                        SendDebugLog($"Sending stop signal for '{SteamManager.LocalPlayerName.ToString()}'.", true);
-                                        NetworkAPI.InvokeEvent<ClientSendData>("Client_Status", new ClientSendData
-                                        {
-                                            clientSlot = Player.PlayerManager.GetLocalPlayerSlotIndex(),
-                                            clientStatus = false, // False == Not Talking
-                                        });
-
-										sendStopOnce = true;
-										sendStartOnce = false;
+                                        SendDebugLog($"Sending toggle type to local PlayerAgent.", true);
                                     }
 
-                                } else if (receivedData == "Talking") // is currently talking
-								{
-									if (sendStartOnce == false) // hasn't been started yet.
-									{
-										SendDebugLog($"Sending talk signal for '{character.PlayerName}'!", true);
-										NetworkAPI.InvokeEvent<ClientSendData>("Client_Status", new ClientSendData
-										{
-											clientSlot = Player.PlayerManager.GetLocalPlayerSlotIndex(),
-											clientStatus = true, // True == Talking
-										});
-
-                                        sendStartOnce = true;
-										sendStopOnce = false;
-                                    }
                                 }
+                                else // Is declared as the client.
+                                {
+                                    if (receivedData != "Talking") // Send stop signal
+                                    {
+                                        if (sendStopOnce == false) // hasn't been stopped yet.
+                                        {
+                                            SendDebugLog($"Sending stop signal for '{SteamManager.LocalPlayerName.ToString()}'.", true);
+                                            NetworkAPI.InvokeEvent<ClientSendData>("Client_Status", new ClientSendData
+                                            {
+                                                clientSlot = Player.PlayerManager.GetLocalPlayerSlotIndex(),
+                                                clientStatus = false, // False == Not Talking
+                                            });
 
-                                sendStartOnce = false;
+                                            sendStopOnce = true;
+                                            sendStartOnce = false;
+                                        }
 
+                                    }
+                                    else if (receivedData == "Talking") // is currently talking
+                                    {
+                                        if (sendStartOnce == false) // hasn't been started yet.
+                                        {
+                                            SendDebugLog($"Sending talk signal for '{character.PlayerName}'!", true);
+                                            NetworkAPI.InvokeEvent<ClientSendData>("Client_Status", new ClientSendData
+                                            {
+                                                clientSlot = Player.PlayerManager.GetLocalPlayerSlotIndex(),
+                                                clientStatus = true, // True == Talking
+                                            });
+
+                                            sendStartOnce = true;
+                                            sendStopOnce = false;
+                                        }
+                                    }
+
+                                    sendStartOnce = false;
+
+                                }
                             }
-						}
-					}
-                    Thread.Sleep(intensity); // Sleep for 120 milliseconds.
-									   // Adjust update frequency if CPU performance is bad.
-				}
+                        }
+                        Thread.Sleep(intensity); // Sleep for 120 milliseconds.
+                                                 // Adjust update frequency if CPU performance is bad.
+                    }
+					catch (Exception e)
+					{
+                        SendErrorLog("Mumble lost connection while game was initialized, closing RMMF connection!", false);
+                        break;
+                    }
+
+                }
 			}
 		}
 
@@ -451,7 +469,10 @@ namespace PositionalAudio
                 bool trygetresult = Player.PlayerManager.TryGetPlayerAgent(ref cSlot, out clientAgent);
                 if (trygetresult)
                 {
-					clientAgent.Noise = Agent.NoiseType.Walk;
+                    if (!OpenPAConfig.configHardMode.Value) // If hardmode is disabled:
+                        clientAgent.Noise = Agent.NoiseType.Walk;
+					else
+                        clientAgent.Noise = Agent.NoiseType.LoudLanding;
                 }
             }
             else

@@ -26,6 +26,14 @@ As well as a full video here:
 
 [![click here for video](https://i.imgur.com/5mdVBjB.jpeg)](https://youtu.be/mMbHiqQQSqk?t=27)
 
+## Config Options
+| Key             | Header       | Description                                                      | Default |
+|-----------------|--------------|------------------------------------------------------------------|---------|
+| configTalkState | Enabled      | Enable TalkState Integration.                                    | false   |
+| configIntensity | Refresh Rate | Amount of ms before TalkState checks for changes in Voice State. | 120     |
+| configHardmode  | Hard Mode    | Allows for Sleepers to instantly wake up upon speaking.          | false   |
+| configVerbose   | Verbose      | Enables debug logs in console.                                   | false   |
+
 ## Special Thanks:
 [Josh Robson Chase](https://gitlab.com/jrobsonchase) for his [Positional Voice Debugger](https://gitlab.com/jrobsonchase/mumble-position-debug) and [Valheim Mod Base](https://gitlab.com/jrobsonchase/valheimpositionalaudio) as well as his [explanation of the whole thing](https://josh.robsonchase.com/valheim-mumble/). Seriously wouldn't have created this without his work.
 

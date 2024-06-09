@@ -5,6 +5,9 @@ The setup process is lengthy and tedious but I genuinely think it pays off. I sp
 
 There is a way to do this by modifying **Dissonance** in GTFO, (since Dissonance supports Proximity Chat, yet 10C disabled this feature), but I am unsure as to how to do that effectively. Maybe one day...
 
+> [!Important]
+> Currently this plugin is undergoing a full rewrite in version 3.0. Hopefully will fix some performance issues and whatnot since I actually kind of know what I am doing now haha.
+
 ## Table of Contents:
 - [Installation Guide](https://github.com/WWYDF/OpenPA/wiki/Installation:-Mod-Manager)
   - [Video Tutorial](https://youtu.be/mMbHiqQQSqk?t=27)

@@ -14,12 +14,13 @@ using OpenUtils;
 
 namespace OpenPA3
 {
+
     public class OpenPAConfig
     {
         public static ConfigEntry<bool>? configTalkState;
         public static ConfigEntry<bool>? configVerbose;
-        public static ConfigEntry<bool>? configHardMode;
-        public static ConfigEntry<int>? configIntensity { get; set; }
+        public static ConfigEntry<bool> configHardMode;
+        public static ConfigEntry<int> configIntensity { get; set; }
     }
 
     [BepInPlugin("com.blals.openpa", "PositionalAudio", "3.0.0")]
@@ -29,6 +30,7 @@ namespace OpenPA3
         public bool isPlayerInLevel = false;
         Thread clientThread;
         public bool gameStarted = false;
+        NoiseAgentHandler noiseHandler = new(); // This needs to be global.
 
         private volatile bool clientNoise = false;
         public override void Load()
@@ -60,7 +62,7 @@ namespace OpenPA3
             string id = OPAUtils.RandomString(16);
             frame->SetID(id);
             frame->SetContext("InLevel");
-            sendLogger($"Mumble Setup Successful. UesrID is {id}, and they are now in context 'InLevel'.", "info", false);
+            sendLogger($"Mumble Setup Successful. UserID is {id}, and they are now in context 'InLevel'.", "info", false);
             return true;
         }
 
@@ -75,13 +77,23 @@ namespace OpenPA3
                 return;
             }
 
+            if (OpenPAConfig.configTalkState.Value) // If TalkState is enabled, set it up.
+            {
+                sendLogger("TalkState enabled. Starting TalkState...", "info", false);
+                PlayerStatus.PlayerStartedTalking(0, false);
+                PlayerStatus.PlayerStatusChanged += PlayerStatusChangedHandler;
+
+                HostSync();
+                initTalkState();
+            }
+
             sendLogger("Connecting to Mumble...", "info", false);
             PlayerAgent character = Player.PlayerManager.GetLocalPlayerAgent();
 
             while (character != null && GameStateManager.CurrentStateName.ToString() != null && isPlayerInLevel == true) // Basically, while (true), send positional data to Mumble.
             {
                 sendToMumble(character, character.EyePosition - new Vector3(0, 1, 0), character.FPSCamera);
-                await Task.Delay(120);
+                await Task.Delay(12);
             }
         }
 
@@ -109,8 +121,6 @@ namespace OpenPA3
             frame->uiTick++;
         }
 
-        // █▄ ▄█ █ █ █▄ ▄█ █▄▄ █   █▀▀    --    █▀▀ █   █▀█ █▀▀ █▀▀
-        // █ ▀ █ █▄█ █ ▀ █ █▄█ █▄▄ ██▄    --    █▄▄ █▄▄ █▄█ ▄██ ██▄ 
 
         public void initClose()
         {
@@ -124,6 +134,127 @@ namespace OpenPA3
 
 
 
+        // ▀█▀ ▄▀▄ █   █▄▀ █▀▀ ▀█▀ ▄▀▄ ▀█▀ █▀▀ 
+        //  █  █▀█ █▄▄ █ █ ▄██  █  █▀█  █  ██▄
+
+        public async void initTalkState()
+        {
+            try
+            {
+                using (MemoryMappedFile.OpenExisting("posaudio_mumlink")) { sendLogger("TalkState loaded, and MemoryMappedFile was found. Continuing with operation.", "info", false); }
+            }
+            catch (FileNotFoundException)
+            {
+                sendLogger("TalkState loaded, but MemoryMappedFile could not be found. Disabling TalkState for this session.", "error", false);
+                return;
+            }
+
+            // Continue with operation after trycatch.
+            bool sendStartOnce = false;
+            bool sendStopOnce = false;
+
+            while (isPlayerInLevel) // Only continue if player is in level.
+            {
+                using (var mmf = MemoryMappedFile.OpenExisting("posaudio_mumlink"))
+                {
+
+                    using (var accessor = mmf.CreateViewAccessor(0, 1024))
+                    {
+                        byte[] dataBytes = new byte[1024];
+                        accessor.ReadArray(0, dataBytes, 0, 1024);
+
+                        string receivedData = Encoding.UTF8.GetString(dataBytes).TrimEnd('\0'); // Put received data into a string and trim the null character.
+
+                        NoiseAgent(receivedData);
+                    }
+                }
+
+
+                await Task.Delay(OpenPAConfig.configIntensity.Value);
+            }
+        }
+
+        public void NoiseAgent(string receivedData)
+        {
+            if (SNet.LocalPlayer.IsMaster) // If Player is the Host
+            {
+                if (receivedData == "Talking")
+                {
+                    if (OpenPAConfig.configHardMode.Value) // If Hardmode is enabled
+                        Player.PlayerManager.GetLocalPlayerAgent().Noise = Agent.NoiseType.LoudLanding;
+                    else
+                        Player.PlayerManager.GetLocalPlayerAgent().Noise = Agent.NoiseType.Walk;
+                    sendLogger("[NoiseAgent] Local Player is now audible.", "debug", true);
+                    return;
+                } // Since player is host, it doesn't need to be cancelled. (weird game logic, idk either)
+                return;
+            }
+            
+            // "else" (client stuff below)
+            noiseHandler.ClientNoiseAgent(receivedData);
+        }
+
+        
+
+
+
+
+
+        // █▀▀ ▀█▀ █▀▀ ▄▀▄ █▄ ▄█    █▄ █ █▀▀ ▀█▀ █ █ █ █▀█ █▀█ █▄▀ ▀█▀ █▄ █ █▀▀
+        // ▄██  █  ██▄ █▀█ █ ▀ █    █ ▀█ ██▄  █  ▀▄▀▄▀ █▄█ █▀▄ █ █ ▄█▄ █ ▀█ █▄█
+
+
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+        public struct ClientSendData
+        {
+            public int clientSlot;
+            public bool clientStatus;
+        }
+
+        public void HostSync()
+        {
+            if (NetworkAPI.IsEventRegistered("Client_Status") == true) { return; } // prevent opening more than one event handler.
+
+            NetworkAPI.RegisterEvent<ClientSendData>("Client_Status", (senderId, packet) =>
+            {
+                if (!SNet.LocalPlayer.IsMaster) return; // Make sure player is host.
+
+                sendLogger($"Message receive from {senderId}: {packet.clientSlot}, {packet.clientStatus}.", "debug", true);
+
+                switch (packet.clientStatus)
+                {
+                    case true:
+                        PlayerStatus.PlayerStartedTalking(packet.clientSlot, true); break;
+
+                    case false:
+                        PlayerStatus.PlayerStoppedTalking(packet.clientSlot); break;
+                }
+
+                sendLogger("[HostSync] Triggered NetworkEvent.", "debug", true);
+            });
+            sendLogger("[HostSync] Registered NetworkEvent.", "info", false);
+        }
+
+        public void PlayerStatusChangedHandler(object sender, PlayerStatusChangedEvent e)
+        {
+            int cSlot = e.PlayerID;
+            PlayerAgent clientAgent = null;
+
+            if (e.IsTalking)
+            {
+                sendLogger($"Player {e.PlayerID} started talking.", "debug", true);
+                bool trygetresult = Player.PlayerManager.TryGetPlayerAgent(ref cSlot, out clientAgent);
+                if (trygetresult)
+                {
+                    clientAgent.Noise = Agent.NoiseType.Walk;
+                }
+            }
+            else
+            {
+                sendLogger($"Player {e.PlayerID} stopped talking.", "debug", true);
+            }
+        }
+
 
 
 
@@ -135,7 +266,7 @@ namespace OpenPA3
         {
             if (verbose) // This message is verbose
             {
-                if (OpenPAConfig.configVerbose.Value) // Player has verbose off.
+                if (!OpenPAConfig.configVerbose.Value) // Player has verbose off.
                 {
                     return;
                 }
@@ -154,6 +285,49 @@ namespace OpenPA3
                     Log.LogWarning(msg); break;
 
             }
+        }
+    }
+
+    public static class PlayerStatus
+    {
+
+        private static ConcurrentDictionary<int, bool> playerStatus = new ConcurrentDictionary<int, bool>();
+
+        public static event EventHandler<PlayerStatusChangedEvent> PlayerStatusChanged;
+
+        public static void PlayerStartedTalking(int playerID, bool isTalking)
+        {
+            playerStatus.AddOrUpdate(playerID, isTalking, (key, oldValue) => isTalking);
+
+            // Raise changed event
+            OnPlayerStatusChanged(new PlayerStatusChangedEvent(playerID, isTalking));
+        }
+
+        public static void PlayerStoppedTalking(int playerID)
+        {
+            bool removed = playerStatus.TryRemove(playerID, out _);
+        }
+
+        public static List<int> GetPlayersTalking()
+        {
+            return playerStatus.Where(kv => kv.Value).Select(kv => kv.Key).ToList();
+        }
+
+        private static void OnPlayerStatusChanged(PlayerStatusChangedEvent e)
+        {
+            PlayerStatusChanged?.Invoke(null, e);
+        }
+    }
+
+    public class PlayerStatusChangedEvent : EventArgs
+    {
+        public int PlayerID { get; }
+        public bool IsTalking { get; }
+
+        public PlayerStatusChangedEvent(int playerID, bool isTalking)
+        {
+            PlayerID = playerID;
+            IsTalking = isTalking;
         }
     }
 }

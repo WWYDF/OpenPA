@@ -23,7 +23,7 @@ namespace OpenPA3
         public static ConfigEntry<int> configIntensity { get; set; }
     }
 
-    [BepInPlugin("com.blals.openpa", "PositionalAudio", "3.0.0")]
+    [BepInPlugin("net.devante.gtfo.positionalaudio", "PositionalAudio", "3.0.0")]
     public class Plugin : BasePlugin
     {
         mumblelib.MumbleLinkFile mumbleLink;
@@ -99,7 +99,7 @@ namespace OpenPA3
 
         public unsafe void sendToMumble(PlayerAgent character, Vector3 position, FPSCamera usercam)
         {
-            sendLogger($"X={position.x}, Y={position.y}, Z={position.z}, RotX={usercam.Forward.x}, RotY={usercam.Forward.y}, RotZ={usercam.Forward.z}", "debug", true);
+            // sendLogger($"X={position.x}, Y={position.y}, Z={position.z}, RotX={usercam.Forward.x}, RotY={usercam.Forward.y}, RotZ={usercam.Forward.z}", "debug", true);
 
             mumblelib.Frame* frame = mumbleLink.FramePtr();
 
@@ -150,8 +150,6 @@ namespace OpenPA3
             }
 
             // Continue with operation after trycatch.
-            bool sendStartOnce = false;
-            bool sendStopOnce = false;
 
             while (isPlayerInLevel) // Only continue if player is in level.
             {
